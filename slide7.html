@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.AIの基本概念：大規模言語モデルの理解</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+
+            position: relative;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .slide-title {
+            color: #4361ee;
+            border-bottom: 2px solid #4361ee;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+        .subtitle {
+            color: #718096;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .card-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        .content-text {
+            color: #4a5568;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .process-step {
+            background-color: #edf2ff;
+            border-left: 3px solid #4361ee;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        .process-title {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .process-desc {
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(3, auto);
+            gap: 12px;
+            padding: 6px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #edf2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4361ee;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        .feature-content h4 {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .feature-content p {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+        .limitation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .limitation-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e53e3e;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        .flow-diagram {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        .flow-step {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            width: 30%;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .flow-step-title {
+            font-weight: 500;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #edf2ff;
+            padding-bottom: 5px;
+            font-size: 0.95rem;
+        }
+        .flow-step-content {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            left: 32%;
+            width: 34%;
+            height: 2px;
+            background-color: #a0aec0;
+            z-index: 0;
+        }
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #a0aec0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .footer-note {
+            background-color: #edf2ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .compact-grid {
+            display: grid;
+            grid-gap: 18px;
+        }
+    </style></head>
+<body>
+    <div class="slide p-8">
+        <h1 class="slide-title text-3xl font-bold mb-2">5.AIの基本概念：大規模言語モデルの理解</h1>
+        <h2 class="subtitle text-lg">現代の人工知能とその仕組み</h2>
+        
+        <div class="grid grid-cols-2 gap-6 mt-2">
+            <!-- Left Column -->
+            <div class="compact-grid">
+                <!-- AI and LLM Definition -->
+                <div class="card p-5">
+                    <div class="card-header">
+                        <i class="fas fa-microchip text-blue-500 text-xl"></i>
+                        <h3 class="card-title">AIと大規模言語モデル（LLM）の定義</h3>
+                    </div>
+                    <p class="content-text mb-3">人工知能（AI）は、人間の知能を模倣するコンピュータシステムです。特に大規模言語モデル（LLM）は、巨大なニューラルネットワークベースのAIモデルです。</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="text-base font-medium text-gray-700 mb-1">機械学習</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">データからパターンを学習し、判断や予測を行う能力</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <h4 class="text-base font-medium text-gray-700 mb-1">ディープラーニング</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">多層ニューラルネットワークによるパターン認識</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LLM Processing -->
+                <div class="card p-5">
+                    <div class="card-header">
+                        <i class="fas fa-cogs text-purple-500 text-xl"></i>
+                        <h3 class="card-title">LLMの処理プロセス</h3>
+                    </div>
+                    
+                    <div class="flow-diagram h-32 relative">
+                        <div class="flow-step">
+                            <div class="flow-step-title">
+                                <i class="fas fa-keyboard text-blue-500 mr-1"></i>
+                                入力処理
+                            </div>
+                            <div class="flow-step-content">
+                                テキスト入力をトークンに分解し、数値表現に変換
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="flow-step">
+                            <div class="flow-step-title">
+                                <i class="fas fa-brain text-purple-500 mr-1"></i>
+                                モデル処理
+                            </div>
+                            <div class="flow-step-content">
+                                注意機構で文脈理解し、次のトークンを予測
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="flow-step">
+                            <div class="flow-step-title">
+                                <i class="fas fa-comment-dots text-green-500 mr-1"></i>
+                                出力生成
+                            </div>
+                            <div class="flow-step-content">
+                                予測された応答を整形・最適化して提供
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Large Language Models -->
+                <div class="card p-5">
+                    <div class="card-header">
+                        <i class="fas fa-language text-indigo-500 text-xl"></i>
+                        <h3 class="card-title">大規模言語モデル</h3>
+                    </div>
+                    <p class="content-text mb-3">膨大なテキストデータで訓練され、言語の構造と意味を理解・生成できる特殊なAI</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div class="bg-blue-50 p-3 rounded">
+                            <h4 class="text-base font-medium text-blue-700 mb-1">予測と生成</h4>
+                            <p class="text-sm leading-relaxed">パラメータとデータから適切なトークンを予測し、文脈に沿った文章を生成</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded">
+                            <h4 class="text-base font-medium text-green-700 mb-1">出力最適化</h4>
+                            <p class="text-sm leading-relaxed">生成された応答を読みやすく、一貫性のある形式に調整</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="compact-grid">
+                <!-- AI Core Capabilities -->
+                <div class="card p-5">
+                    <div class="card-header">
+                        <i class="fas fa-bolt text-yellow-500 text-xl"></i>
+                        <h3 class="card-title">AIの核心的能力</h3>
+                    </div>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line text-blue-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>パターン認識</h4>
+                                <p>データから複雑なパターンを識別し関連性を見出す</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-comment-alt text-indigo-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>言語理解</h4>
+                                <p>文脈を考慮して言語の意味や意図を理解し応答</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-database text-purple-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>知識アクセス</h4>
+                                <p>学習データの広大な範囲に瞬時にアクセス</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-pen-fancy text-green-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>コンテンツ生成</h4>
+                                <p>一貫性のある創造的コンテンツを作成</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-project-diagram text-teal-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>情報統合</h4>
+                                <p>複数の情報を関連づけ重要ポイントを提供</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-sync-alt text-cyan-500"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>適応性</h4>
+                                <p>様々な質問や場面に柔軟に対応</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Limitations -->
+                <div class="card p-5">
+                    <div class="card-header">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+                        <h3 class="card-title">AIの現在の限界</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 mt-2">
+                        <div class="limitation-item">
+                            <div class="limitation-icon">
+                                <i class="fas fa-question"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-medium text-gray-800 mb-1">真の理解の欠如</h4>
+                                <p class="text-sm text-gray-600">表面的なパターンは理解できても、深い概念理解や意識は持たない</p>
+                            </div>
+                        </div>
+                        
+                        <div class="limitation-item">
+                            <div class="limitation-icon">
+                                <i class="fas fa-ghost"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-medium text-gray-800 mb-1">幻覚（ハルシネーション）</h4>
+                                <p class="text-sm text-gray-600">自信ありげに不正確な情報を生成する</p>
+                            </div>
+                        </div>
+                        
+                        <div class="limitation-item">
+                            <div class="limitation-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-medium text-gray-800 mb-1">最新情報の欠如</h4>
+                                <p class="text-sm text-gray-600">トレーニングデータ以降の情報は把握していない</p>
+                            </div>
+                        </div>
+                        
+                        <div class="limitation-item">
+                            <div class="limitation-icon">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-medium text-gray-800 mb-1">文脈の限界</h4>
+                                <p class="text-sm text-gray-600">扱える文脈の量（コンテキストウィンドウ）に制限がある</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI as a Mirror -->
+                <div class="footer-note">
+                    <div class="note-title flex items-center">
+                        <i class="fas fa-mirror text-indigo-500 mr-2 text-lg"></i>
+                        AIは人間の集合知を反映する鏡
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        大規模言語モデルは、人間が生み出した膨大なテキストデータから学習するため、人間の集合的知識、考え方、価値観、そして偏見までも反映する「鏡」のような存在です。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div></body>
+</html>
